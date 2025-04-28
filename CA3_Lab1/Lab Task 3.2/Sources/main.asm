@@ -7,88 +7,113 @@
 ;
 ;   Author:   	   J.Friedrich, W. Zimmermann
 ;   Last Modified: R. Keller, August 2022
+;
+; Modified by: Ergün Bickici & Tim Jauch
 
-; Export symbols
-        XDEF Entry, main
+; --------------------------------------------------------------
+; Exported symbols
+        XDEF    Entry, main
 
-; Import symbols
-        XREF __SEG_END_SSTACK                   ; End of stack
-        XREF initLCD, writeLine, delay_10ms     ; LCD functions
-        XREF decToASCII, hexToASCII             ; ASCII functions
-        XREF initLED, setLED                    ; LED functions
-        XREF delay_0_5sec                       ; Delay (busy wait) for 0.5 seconds
+; Imported symbols
+        XREF    __SEG_END_SSTACK             ; End of stack
+        XREF    initLCD, writeLine, delay_10ms
+        XREF    decToASCII, hexToASCII
+        XREF    initLED, setLED
+        XREF    delay_0_5sec
 
-; Include derivative specific macros
+; Include device-specific register definitions
         INCLUDE 'mc9s12dp256.inc'
 
-; Defines
-
+; --------------------------------------------------------------
 ; RAM: Variable data section
 .data:  SECTION
-Vtext:   dc.b 17
+Vtext:  DS.B    17                            ; Buffer for ASCII text (max 16 characters + null)
 
-; ROM: Constant data
+; --------------------------------------------------------------
+; ROM: Constant data section
 .const: SECTION
 
+; --------------------------------------------------------------
 ; ROM: Code section
 .init:  SECTION
 
+; --------------------------------------------------------------
+; Main program
 main:
 Entry:
-        LDS  #__SEG_END_SSTACK          ; Initialize stack pointer
-        CLI                             ; Enable interrupts, needed for debugger
-        
-        JSR initLED 
-        JSR initLCD                     
+        LDS     #__SEG_END_SSTACK              ; Initialize stack pointer
+        CLI                                    ; Enable interrupts (required for debugger)
 
-        LDD #0
-loop:   
-        LDX #Vtext                      ; Write D as decimal number onto line 0
-        JSR decToASCII
+        ; Initialize peripherals
+        JSR     initLED
+        JSR     initLCD
+
+        ; Initialize counter
+        LDD     #0
+
+; --------------------------------------------------------------
+; Main loop
+loop:
+        ; Display decimal number on LCD line 0
+        LDX     #Vtext
+        JSR     decToASCII
         PSHD
-        LDAB #0                         ; Write to line 0
-        JSR  writeLine
+        LDAB    #0
+        JSR     writeLine
         PULD
 
-        LDX #Vtext                      ; Write D as hex number onto line 1
-        JSR hexToASCII
+        ; Display hexadecimal number on LCD line 1
+        LDX     #Vtext
+        JSR     hexToASCII
         PSHD
-        LDAB #1                         ; Write to line 1
-        JSR  writeLine
+        LDAB    #1
+        JSR     writeLine
         PULD
 
-        JSR setLED                      ; Set LEDs to lower value in D (B)
+        ; Output value to LEDs
+        JSR     setLED
 
-        JSR delay_0_5sec
+        ; Delay ~0.5 seconds
+        JSR     delay_0_5sec
 
-  IFDEF  SIMULATOR
-        BRSET PTH, #$01, inc16
-        BRSET PTH, #$02, inc10
-        BRSET PTH, #$04, dec16
-        BRSET PTH, #$08, dec10
+; --------------------------------------------------------------
+; Check button inputs (simulator and real hardware versions)
+  IFDEF SIMULATOR
+        BRSET   PTH, #$01, inc16
+        BRSET   PTH, #$02, inc10
+        BRSET   PTH, #$04, dec16
+        BRSET   PTH, #$08, dec10
   ELSE
-        BRCLR PTH, #$01, inc16
-        BRCLR PTH, #$02, inc10
-        BRCLR PTH, #$04, dec16
-        BRCLR PTH, #$08, dec10
-        BRA inc
+        BRCLR   PTH, #$01, inc16
+        BRCLR   PTH, #$02, inc10
+        BRCLR   PTH, #$04, dec16
+        BRCLR   PTH, #$08, dec10
+        BRA     inc
   ENDIF
 
+; --------------------------------------------------------------
+; Button action subroutines
 inc16:
-        ADDD #16
-        BRA loop
+        ADDD    #16
+        BRA     loop
+
 inc10:
-        ADDD #10
-        BRA loop
+        ADDD    #10
+        BRA     loop
+
 dec16:
-        SUBD #16
-        BRA loop
+        SUBD    #16
+        BRA     loop
+
 dec10:
-        SUBD #10
-        BRA loop
+        SUBD    #10
+        BRA     loop
+
 inc:
-        ADDD #1
-        BRA loop
+        ADDD    #1
+        BRA     loop
 
-
-back:   BRA back
+; --------------------------------------------------------------
+; Infinite loop (should never reach here)
+back:
+        BRA     back
