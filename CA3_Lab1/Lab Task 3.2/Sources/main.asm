@@ -71,6 +71,7 @@ loop:
         BRCLR PTH, #$02, inc10
         BRCLR PTH, #$04, dec16
         BRCLR PTH, #$08, dec10
+        BRA inc
   ENDIF
 
 inc16:
