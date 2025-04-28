@@ -1,5 +1,5 @@
 ; Labor 1 - Preparation Task 1.1
-; 16-bit counter, incrementing by 2, output on LEDs with delay
+; 16-bit counter, incrementing by 2, output on LEDs with 0.5 seconds delay
 ;
 ; Computerarchitektur
 ; (C) 2019-2022 J. Friedrich, W. Zimmermann, R. Keller
@@ -19,8 +19,8 @@
 
 ; --------------------------------------------------------------
 ; Constant definitions
-SPEED_X:    EQU     1000                    ; Outer loop counter value
-SPEED_Y:    EQU     10000                   ; Inner loop counter value
+SPEED_X:    EQU     300                    ; Outer loop counter value
+SPEED_Y:    EQU     10000                  ; Inner loop counter value
 
 ; --------------------------------------------------------------
 ; RAM: Variable data section
@@ -80,7 +80,7 @@ loop:
 
 ; --------------------------------------------------------------
 ; Public interface function: delay_0_5sec
-; Purpose: Simple delay loop (~0.5 seconds) without using global variables
+; Purpose: Simple delay loop (~0.5 seconds)
 ; Parameters: -
 ; Returns: -
 ; Registers modified: X, Y
