@@ -35,8 +35,6 @@ initLED:
         MOVB    #$FF, DDRB                  ; Set all PORTB pins as outputs
         MOVB    #0, PORTB                   ; Turn off all LEDs
         RTS
-        MOVB    #0, PORTB                   ; Turn off all LEDs
-        RTS
 
 ; --------------------------------------------------------------
 ; Public interface function: setLED

@@ -16,7 +16,7 @@
 
 ; --------------------------------------------------------------
 ; Constant definitions
-time:       EQU     2048
+time:       EQU     1950
 
 ; --------------------------------------------------------------
 ; RAM: Variable data section
@@ -32,7 +32,7 @@ time:       EQU     2048
 
 ; --------------------------------------------------------------
 ; Public interface function: delay_0_5sec
-; Purpose: Create a software delay (~0.5 seconds) without using global variables.
+; Purpose: Create a software delay (~0.5 seconds)
 ; Parameter: -
 ; Returns: -
 ; Registers modified: X, Y

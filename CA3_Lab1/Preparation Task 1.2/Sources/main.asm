@@ -23,11 +23,6 @@
         INCLUDE 'mc9s12dp256.inc'
 
 ; --------------------------------------------------------------
-; Constant definitions
-time:       EQU     2048
-SPEED:      EQU     $FFFF
-
-; --------------------------------------------------------------
 ; RAM: Variable data section
 .data:  SECTION
 
