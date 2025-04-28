@@ -91,10 +91,10 @@ Entry:
         JSR     delay
 
 ; --------------------------------------------------------------
-; Delay subroutine (approximately 1 second delay)
+; Delay subroutine (approximately 4 second delay)
 delay:
         PSHA                                  ; Save A register
-        LDAA    #100                          ; Load counter for 100 x 10ms = ~1s
+        LDAA    #400                          ; Load counter for 400 x 10ms = ~4s
         JSR     loopDelay
         PULA                                  ; Restore A register
         RTS
