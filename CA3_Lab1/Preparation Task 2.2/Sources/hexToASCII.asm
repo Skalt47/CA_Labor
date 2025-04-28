@@ -1,6 +1,5 @@
-;   Labor 1 - Problem 2.4
-;   Convert a zero-terminated ASCIIZ string to lower characters
-;   Subroutine toLower
+;   Lab 1 - Preparation Task 2.2
+;   Convert a 16-bit hexadecimal number to an ASCII string
 ;
 ;   Computerarchitektur
 ;   (C) 2019-2022 J. Friedrich, W. Zimmermann, R. Keller
@@ -8,116 +7,111 @@
 ;
 ;   Author:   R. Keller, HS-Esslingen
 ;            (based on code provided by J. Friedrich, W. Zimmermann)
-;   Modified: -
 ;
+; Modified by: Ergün Bickici & Tim Jauch
 
+; --------------------------------------------------------------
+; Exported symbols
+        XDEF    hexToASCII
 
-; export symbols
-        XDEF hexToASCII
+; --------------------------------------------------------------
+; Include device-specific register definitions
+        INCLUDE 'mc9s12dp256.inc'
 
-; Defines
-
-; Defines
-
+; --------------------------------------------------------------
 ; RAM: Variable data section
-.data: SECTION
+.data:  SECTION
 
-; ROM: Constant data
+; --------------------------------------------------------------
+; ROM: Constant data section
 .const: SECTION
+H2A:    DC.B    "0123456789ABCDEF"            ; Lookup table for hexadecimal digits
 
+; --------------------------------------------------------------
 ; ROM: Code section
-.init: SECTION
-H2A: DC.B "0123456789ABCDEF";   Define H2A ROM rable to read digit as index
+.init:  SECTION
+
+; --------------------------------------------------------------
+; Public interface function: hexToASCII
+; Purpose: Convert a 16-bit hexadecimal value into an ASCII string ("0x____0").
+; Parameters:
+;   D ... 16-bit value to convert
+;   X ... pointer to destination string (at least 7 bytes)
+; Returns: -
+; Registers modified: A, B, D, X, Y
+; Error checks: None
 
 hexToASCII:
-    PSHY
-    PSHX
-    PSHD
+        PSHY                                 ; Save Y register
+        PSHX                                 ; Save X register
+        PSHD                                 ; Save D register
 
+        ; Initialize the output buffer with "0x"
+        MOVB    #'0', 0, X
+        MOVB    #'x', 1, X
+        MOVB    #0, 6, X
 
-    MOVB #'0', 0, X
-    MOVB #'x', 1, X
-    MOVB #0, 6, X
+; --------------------------------------------------------------
+; Extract first (highest) hex digit
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD                                ; Logical shift right D 12 times
+        ANDB    #$0F                        ; Mask lower nibble
+        TFR     B, Y                        ; Transfer to Y for lookup
+        LDD     H2A, Y                      ; Load ASCII character from table
+        STAA    2, X                        ; Store to output buffer
+        PULD                                ; Restore D register
 
-    LSRD
-    LSRD
-    LSRD
-    LSRD
-    
-    LSRD
-    LSRD
-    LSRD
-    LSRD
+; --------------------------------------------------------------
+; Extract second hex digit
+        PSHD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD
+        LSRD                                ; Logical shift right D 8 times
+        ANDB    #$0F
+        TFR     B, Y
+        LDD     H2A, Y
+        STAA    3, X
+        PULD
 
-    LSRD
-    LSRD
-    LSRD
-    LSRD
+; --------------------------------------------------------------
+; Extract third hex digit
+        PSHD
+        LSRD
+        LSRD
+        LSRD
+        LSRD                                ; Logical shift right D 4 times
+        ANDB    #$0F
+        TFR     B, Y
+        LDD     H2A, Y
+        STAA    4, X
+        PULD
 
-    ; Zusammenarbeit mit Philipp Walter und Alex Efremidis    
-    ANDB #$0F
-    TFR B, Y
-    LDD H2A, Y   ; D = H2A + Y
-    STAA 2,x     ; A = x + 2
-    PULD
-    ; Ende Zusammenarbeit
+; --------------------------------------------------------------
+; Extract fourth (lowest) hex digit
+        PSHD
+        ANDB    #$0F
+        TFR     B, Y
+        LDD     H2A, Y
+        STAA    5, X
+        PULD
 
-
-
-
-
-
-    PSHD
-    
-    LSRD
-    LSRD
-    LSRD
-    LSRD
-    LSRD
-    LSRD
-    LSRD
-    LSRD
-
-    ; Zusammenarbeit mit Philipp Walter und Alex Efremidis
-    ANDB #$0F
-    TFR B, Y
-    LDD H2A, Y
-    STAA 3,x
-    PULD
-    ; Ende Zusammenarbeit
-
-
-
-
-    PSHD
-    LSRD
-    LSRD
-    LSRD
-    LSRD
-
-    ; Zusammenarbeit mit Philipp Walter und Alex Efremidis    
-    ANDB #$0F
-    TFR B, Y
-    LDD H2A, Y
-    STAA 4,x
-    PULD
-    ; Ende Zusammenarbeit
-
-    PSHD
-    
-    ANDB #$0F
-    TFR B, Y
-    LDD H2A, Y
-    STAA 5,x
-
-
-
-
-
-
-
-
-    PULD
-    PULX
-    PULY
-    RTS
+; --------------------------------------------------------------
+; Restore registers and return
+        PULX
+        PULY
+        RTS

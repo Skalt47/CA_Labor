@@ -1,5 +1,5 @@
-;   Labor 1 - Vorbereitungsaufgabe 2.4
-;   Convert a zero-terminated ASCIIZ string to lower characters
+;   Lab 1 - Preparation Task 2.2
+;   Convert a 16-bit hexadecimal number to a zero-terminated ASCII string
 ;   Main program
 ;
 ;   Computerarchitektur
@@ -8,43 +8,48 @@
 ;
 ;   Author:   R. Keller, Jul 4, 2019
 ;            (based on code provided by J. Friedrich, W. Zimmermann)
-;   Modified: -
 ;
+; Modified by: Ergün Bickici & Tim Jauch
 
+; --------------------------------------------------------------
+; Exported symbols
+        XDEF    Entry, main
 
-; export symbols
-        XDEF Entry, main
+; Imported symbols
+        XREF    __SEG_END_SSTACK           ; End of stack
+        XREF    hexToASCII                 ; Hex to ASCII conversion subroutine
 
-; import symbols
-        XREF __SEG_END_SSTACK           ; End of stack
-        XREF hexToASCII
-
-; include derivative specific macros
+; Include device-specific register definitions
         INCLUDE 'mc9s12dp256.inc'
 
-; Defines
-
+; --------------------------------------------------------------
 ; RAM: Variable data section
 .data:  SECTION
-        val: DS.W 1                     ; define 16 Bit value for second parameter
-        charString: DS.B 7              ; define charString with 7 Bytes (0x____0)
+value:      DS.W    1                      ; 16-bit value to convert
+charString: DS.B    7                      ; ASCII character array (0x____0 format)
 
-
-; ROM: Constant data
+; --------------------------------------------------------------
+; ROM: Constant data section
 .const: SECTION
 
+; --------------------------------------------------------------
 ; ROM: Code section
 .init:  SECTION
 
-main:                                   ; Begin of the program
+; --------------------------------------------------------------
+; Main program
+main:
 Entry:
-        LDS  #__SEG_END_SSTACK          ; Initialize stack pointer
-        CLI                             ; Enable interrupts, needed for debugger
+        LDS     #__SEG_END_SSTACK            ; Initialize stack pointer
+        CLI                                   ; Enable interrupts (required for debugger)
 
-        LDX #charString
-        MOVW #$F018, val
-        LDD val
-        JSR hexToASCII
+        ; Prepare input value and output buffer
+        LDX     #charString                  ; Load address of output buffer
+        MOVW    #$F018, value                ; Load example value (0xF018) into 'value'
+        LDD     value                        ; Load value into D register
+        JSR     hexToASCII                   ; Convert value to ASCII string
 
+; --------------------------------------------------------------
+; Infinite loop to keep program running
 loop:
-        BRA loop
+        BRA     loop
