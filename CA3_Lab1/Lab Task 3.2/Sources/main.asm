@@ -83,6 +83,7 @@ loop:
         BRSET   PTH, #$02, inc10
         BRSET   PTH, #$04, dec16
         BRSET   PTH, #$08, dec10
+        BRA     inc
   ELSE
         BRCLR   PTH, #$01, inc16
         BRCLR   PTH, #$02, inc10
@@ -114,6 +115,6 @@ inc:
         BRA     loop
 
 ; --------------------------------------------------------------
-; Infinite loop (should never reach here)
+; Infinite loop
 back:
         BRA     back
