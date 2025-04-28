@@ -27,15 +27,14 @@
 ; --------------------------------------------------------------
 ; ROM: Constant data section
 .const: SECTION
-MSG1:   DC.B    "Just a little", 0
-MSG2:   DC.B    "break please", 0
+MSG1:   dc.b " Mach mal eine",0
+MSG2:   dc.b " kleine Pause", 0
 
 msgA:   DC.B    "ABCDEFGHIJKLMnopqrstuvwxyz1234567890", 0  ; Message for LCD line 0
 msgB:   DC.B    "is this OK?", 0                            ; Message for LCD line 1
 msgC:   DC.B    "Keep texts short!", 0                      ; Message for LCD line 0
 msgD:   DC.B    "Oh yeah!", 0                               ; Message for LCD line 1
 
-msgE:   DC.B    "0123456789ABCDEFGHIJKLMNOPQRST", 0
 
 ; --------------------------------------------------------------
 ; ROM: Code section
