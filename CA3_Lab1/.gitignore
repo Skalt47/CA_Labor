@@ -1,0 +1,17 @@
+*.lst
+*.s19
+*.map
+*.cmd
+*.abs
+*.dbg
+*.bin
+*.ini
+*.o
+*.elf
+*.dep
+*.opt
+*.lnk
+*.~*
+*.bak
+*.log
+.DS_Store
