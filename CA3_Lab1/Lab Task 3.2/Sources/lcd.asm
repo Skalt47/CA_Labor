@@ -198,11 +198,11 @@ writeLine:
           pshd
           pshx
 
-          pshb
+          ;pshb
           jsr  sel_inst   ; select instruction
-          pulb
+          ;pulb
           cmpb #1
-          bne writeLine1
+          beq writeLine1
 writeLine0:
           ldaa #LCD_LINE0 ; set cursor to begin of line 0
           bra  wDo
@@ -212,27 +212,32 @@ wDo:      jsr  outputByte
 
           jsr  sel_data   ; select data
 
-msg_out:
-          ldab #16          ; Max 16 characters
-next:
-          ldaa 0,x          ; Load next character
-          tsta
-          beq fillSpaces    ; If end of string, fill spaces
-          jsr outputByte    ; Output the character
-          inx               ; Next character
-          decb
-          bne next
-          bra wEnd
+msg_out:                  ; output the message character by character
+          ldab #17        ; max. 16 characters + padding
+next:     ldaa 0,x        ; get character
 
-fillSpaces:
-          ldaa #' '         ; Load space
-          jsr outputByte    ; Output space
+          TSTA            ; Test if end of string is reached
+          BEQ fill_blanks ; If end of String is reached, jump to fill
+
           decb
-          bne fillSpaces
-wEnd:
-          pulx
+          beq  wEnd       ; not more than 16 characters
+          jsr  outputByte ; write character to LCD
+          inx             ; continue with next character
+          bra  next
+
+fill_blanks:
+          LDAA #' '       ; Load A register with backspace
+          DECB            ; Decrement register B
+          TSTB            ; Test if B is zero
+          BEQ wEnd        ; If B is zero, jump to wEnd
+          JSR outputByte  ; output Character
+          BRA next        ; repeat 
+
+
+wEnd:     pulx
           puld
           rts
+
 
 ;**************************************************************
 ; Public interface function: delay_10ms
