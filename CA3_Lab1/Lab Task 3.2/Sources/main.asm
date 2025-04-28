@@ -1,4 +1,4 @@
-;
+;   Lab Task 3.2
 ;   Labor 1 - Test program for LCD driver
 ;
 ;   Computerarchitektur
@@ -10,12 +10,15 @@
 ;
 ; Modified by: Ergün Bickici & Tim Jauch
 
+
 ; --------------------------------------------------------------
 ; Exported symbols
         XDEF    Entry, main
+        XDEF    initButtons
+        XDEF    checkButtons
 
 ; Imported symbols
-        XREF    __SEG_END_SSTACK             ; End of stack
+        XREF    __SEG_END_SSTACK              ; End of stack
         XREF    initLCD, writeLine, delay_10ms
         XREF    decToASCII, hexToASCII
         XREF    initLED, setLED
@@ -27,7 +30,7 @@
 ; --------------------------------------------------------------
 ; RAM: Variable data section
 .data:  SECTION
-Vtext:  DS.B    17                            ; Buffer for ASCII text (max 16 characters + null)
+Vtext:  DS.B    17                             ; Buffer for ASCII text (max 16 characters + null)
 
 ; --------------------------------------------------------------
 ; ROM: Constant data section
@@ -41,12 +44,13 @@ Vtext:  DS.B    17                            ; Buffer for ASCII text (max 16 ch
 ; Main program
 main:
 Entry:
-        LDS     #__SEG_END_SSTACK              ; Initialize stack pointer
-        CLI                                    ; Enable interrupts (required for debugger)
+        LDS     #__SEG_END_SSTACK               ; Initialize stack pointer
+        CLI                                     ; Enable interrupts (required for debugger)
 
         ; Initialize peripherals
         JSR     initLED
         JSR     initLCD
+        JSR     initButtons                     ; Configure Port H for button input
 
         ; Initialize counter
         LDD     #0
@@ -76,8 +80,31 @@ loop:
         ; Delay ~0.5 seconds
         JSR     delay_0_5sec
 
+        ; Check button inputs
+        JSR     checkButtons
+
+        BRA     loop
+
 ; --------------------------------------------------------------
-; Check button inputs (simulator and real hardware versions)
+; Subroutine: initButtons
+; Purpose: Configure Port H as input for buttons
+; Parameters: -
+; Returns: -
+; Registers modified: -
+; Error checks: None
+initButtons:
+        CLR     DDRH                             ; Configure Port H pins as input
+        CLR     PTH                              ; Clear Port H output latch (optional)
+        RTS
+
+; --------------------------------------------------------------
+; Subroutine: checkButtons
+; Purpose: Read button inputs and adjust counter accordingly
+; Parameters: -
+; Returns: -
+; Registers modified: D
+; Error checks: None
+checkButtons:
   IFDEF SIMULATOR
         BRSET   PTH, #$01, inc16
         BRSET   PTH, #$02, inc10
@@ -96,25 +123,25 @@ loop:
 ; Button action subroutines
 inc16:
         ADDD    #16
-        BRA     loop
+        RTS
 
 inc10:
         ADDD    #10
-        BRA     loop
+        RTS
 
 dec16:
         SUBD    #16
-        BRA     loop
+        RTS
 
 dec10:
         SUBD    #10
-        BRA     loop
+        RTS
 
 inc:
         ADDD    #1
-        BRA     loop
+        RTS
 
 ; --------------------------------------------------------------
-; Infinite loop
+; Infinite loop (should never reach here)
 back:
         BRA     back

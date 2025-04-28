@@ -1,4 +1,4 @@
-;
+;   Lab Task 3.1
 ;   Labor 1 - Test program for LCD driver
 ;
 ;   Computerarchitektur
