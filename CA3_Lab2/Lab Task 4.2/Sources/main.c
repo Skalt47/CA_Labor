@@ -5,6 +5,7 @@
     Hochschule Esslingen
 
     Author:  W.Zimmermann, July 19, 2017
+    Modified by: Ergün Bickici & Tim Jauch 
 */
 
 
@@ -13,7 +14,7 @@
 
 #pragma LINK_INFO DERIVATIVE "mc9s12dp256b"
 
-#define SELECT12HOURS
+#define SELECT12HOURS                           // To access the 24-hour view of the clock comment this line out
 
 
 // PLEASE NOTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
@@ -35,6 +36,11 @@ void initTicker(void);
 // Prototypes and wrapper functions for dec2ASCII (from lab 1)
 void decToASCII(void);
 
+void delay(unsigned int ms){
+  unsigned int i,j;
+  for(i = 0; i < ms; i++)
+    for(j = 0; j < 4000; j++);
+}
 
 // Public interface function: decToASCII_Wrapper wrapper function for decToASCII (methode call)
 // Parameter: char pointer to destination for convertet string, int number to convert to string
@@ -153,7 +159,7 @@ char isButtonPressed(char btn)
 }
 
 unsigned char line1Counter = 0;
-char *line1[] = {"Erguen Bickici", "Tim Jauch", "© IT SS 2025"};
+char *line1[] = {"Erguen Bickici", "Tim Jauch", "(c) IT SS 2025"};
 
 
 // Public interface function: WriteLine1_C print line 0 in LCD (methode call)
@@ -231,7 +237,7 @@ void WriteLine2_C() {
         }
     }
 
-    line2[14] = ' ';
+    line2[14] = 0xDF;                 // for Simulator this needs to be changed, so the degree symbol is displayed properly
     line2[15] = 'C';
     line2[16] = '\0';
 
@@ -259,31 +265,36 @@ void main(void)
         {
             mode = !mode;
             toggleLED_C(0x80);             // Toggle left most LED
+            while(isButtonPressed(PTH_PTH0));
+            delay(200);
         }
 
         if (mode == 1) {
             if (isButtonPressed(PTH_PTH1)) {
                 incrementHours();
-                WriteLine2_C(); 
+                WriteLine2_C();
+                delay(200); 
             }
             if (isButtonPressed(PTH_PTH2)) {
                 incrementMinutes();
-                WriteLine2_C(); 
+                WriteLine2_C();
+                delay(200);  
             }
             if (isButtonPressed(PTH_PTH3)) {
                 incrementSeconds();
-                WriteLine2_C(); 
+                WriteLine2_C();
+                delay(200);  
             }
         }
 
         if (clockEvent)
-    	{   
+    	  {   
             clockEvent = 0;
-
             toggleLED_C(0x01);                 // Toggle right most LED
-
-            tickClock();
-            WriteLine2_C();
+            if(mode != 1){
+              tickClock();
+              WriteLine2_C();
+            }
 
             if (counter == 9) {
                 WriteLine1_C();

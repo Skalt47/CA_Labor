@@ -28,11 +28,11 @@ Entry point: 0xC029 (_Startup)
 _startupData is allocated at 0xC163 and uses 11 Bytes
 extern struct _tagStartup {
   unsigned flags          0
-  _PFunc   main           0xC2F3    (main)
+  _PFunc   main           0xC2DF    (main)
   long     stackOffset    0x1124
   unsigned nofZeroOut     1
   _Range   pZeroOut       0x1000     37
-  _Copy    *toCopyDownBeg 0xC3FA
+  _Copy    *toCopyDownBeg 0xC400
 } _startupData;
 
 *********************************************************************************************
@@ -41,9 +41,9 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                            355     R     0xC000     0xC162   ROM_C000
 .startData                        15     R     0xC163     0xC171   ROM_C000
-.rodata1                          38     R     0xC172     0xC197   ROM_C000
-.text                            601     R     0xC198     0xC3F0   ROM_C000
-.copy                             12     R     0xC3FA     0xC405   ROM_C000
+.rodata1                          40     R     0xC172     0xC199   ROM_C000
+.text                            605     R     0xC19A     0xC3F6   ROM_C000
+.copy                             12     R     0xC400     0xC40B   ROM_C000
 .data                              9   R/W     0x1000     0x1008   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -574,12 +574,12 @@ ticker.asm__ORG00001               2     R     0xFFE6     0xFFE7   .absSeg525
 .abs_section_ffd2                  2     R     0xFFD2     0xFFD3   .absSeg526
 .bss                               6   R/W     0x1009     0x100E   RAM
 .common                           22   R/W     0x100F     0x1024   RAM
-.const                             9     R     0xC3F1     0xC3F9   ROM_C000
+.const                             9     R     0xC3F7     0xC3FF   ROM_C000
 .stack                           256   R/W     0x1025     0x1124   RAM
 .vectSeg527_vect                   2     R     0xFFFE     0xFFFF   .vectSeg527
 
 Summary of section sizes per section type:
-READ_ONLY (R):         40C (dec:     1036)
+READ_ONLY (R):         412 (dec:     1042)
 READ_WRITE (R/W):      125 (dec:      293)
 NO_INIT (N/I):         24E (dec:      590)
 
@@ -1123,27 +1123,28 @@ MODULE:                 -- mc9s12dp256.c.o --
      _CAN4TXTSR                                 2BE       2       2       0   .abs_section_2be
 MODULE:                 -- main.c.o --
 - PROCEDURES:
-     decToASCII_Wrapper                        C198       A      10       4   .text       
-     WriteLine_Wrapper                         C1A2       A      10       2   .text       
-     initLED_C                                 C1AC      14      20       1   .text       
-     toggleLED_C                               C1C0       8       8       2   .text       
-     incrementCounter                          C1C8      10      16       2   .text       
-     isButtonPressed                           C1D8       1       1       4   .text       
-     WriteLine1_C                              C1D9      1A      26       2   .text       
-     WriteLine2_C                              C1F3     100     256       5   .text       
-     main                                      C2F3      A0     160       2   .text       
+     delay                                     C19A      1F      31       2   .text       
+     decToASCII_Wrapper                        C1B9       A      10       4   .text       
+     WriteLine_Wrapper                         C1C3       A      10       2   .text       
+     initLED_C                                 C1CD      14      20       1   .text       
+     toggleLED_C                               C1E1       8       8       2   .text       
+     incrementCounter                          C1E9      10      16       2   .text       
+     isButtonPressed                           C1F9       1       1       4   .text       
+     WriteLine1_C                              C1FA      1A      26       2   .text       
+     WriteLine2_C                              C214      CB     203       3   .text       
+     main                                      C2DF      BA     186       3   .text       
 - VARIABLES:
      STRING.Erguen.Bickici.1                   C172       F      15       1   .rodata1    
      STRING.Tim.Jauch.2                        C181       A      10       1   .rodata1    
-     STRING...IT.SS.2025.3                     C18B       D      13       1   .rodata1    
+     STRING..c..IT.SS.2025.3                   C18B       F      15       1   .rodata1    
      line1                                     1000       6       6       1   .data       
      clockEvent                                1009       1       1       3   .bss        
-     mode                                      100A       1       1       3   .bss        
+     mode                                      100A       1       1       4   .bss        
      counter                                   100B       1       1       2   .bss        
      line1Counter                              100C       1       1       2   .bss        
      end                                       100F       1       1       5   .common     
      i                                         1010       1       1       5   .common     
-     line2                                     1011      11      17      29   .common     
+     line2                                     1011      11      17      26   .common     
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
      Init                                      C000      29      41       1   .init       
@@ -1181,15 +1182,15 @@ MODULE:                 -- lcd.asm.o --
 - VARIABLES:
      VAR00001                                  1007       1       1       2   .data       
      temp1                                     1008       1       1       0   .data       
-     VAR00002                                  C3F1       1       1       1   .const      
-     VAR00003                                  C3F2       1       1       0   .const      
-     VAR00004                                  C3F3       1       1       0   .const      
-     VAR00005                                  C3F4       1       1       0   .const      
-     VAR00006                                  C3F5       1       1       1   .const      
-     VAR00007                                  C3F6       1       1       0   .const      
-     VAR00008                                  C3F7       1       1       0   .const      
-     VAR00009                                  C3F8       1       1       0   .const      
-     VAR00010                                  C3F9       1       1       0   .const      
+     VAR00002                                  C3F7       1       1       1   .const      
+     VAR00003                                  C3F8       1       1       0   .const      
+     VAR00004                                  C3F9       1       1       0   .const      
+     VAR00005                                  C3FA       1       1       0   .const      
+     VAR00006                                  C3FB       1       1       1   .const      
+     VAR00007                                  C3FC       1       1       0   .const      
+     VAR00008                                  C3FD       1       1       0   .const      
+     VAR00009                                  C3FE       1       1       0   .const      
+     VAR00010                                  C3FF       1       1       0   .const      
 MODULE:                 -- decToASCII.asm.o --
 - PROCEDURES:
      decToASCII                                C125      12      18       1   .init       
@@ -1199,19 +1200,19 @@ MODULE:                 -- decToASCII.asm.o --
 - VARIABLES:
 MODULE:                 -- clock.c.o --
 - PROCEDURES:
-     initClock                                 C393       F      15       1   .text       
-     incrementHours                            C3A2       E      14       2   .text       
-     incrementMinutes                          C3B0      10      16       2   .text       
-     incrementSeconds                          C3C0      10      16       2   .text       
-     tickClock                                 C3D0       3       3       1   .text       
+     initClock                                 C399       F      15       1   .text       
+     incrementHours                            C3A8       E      14       2   .text       
+     incrementMinutes                          C3B6      10      16       2   .text       
+     incrementSeconds                          C3C6      10      16       2   .text       
+     tickClock                                 C3D6       3       3       1   .text       
 - VARIABLES:
-     hours                                     1022       1       1       6   .common     
+     hours                                     1022       1       1       5   .common     
      minutes                                   1023       1       1       5   .common     
      seconds                                   1024       1       1       5   .common     
 MODULE:                 -- thermometer.c.o --
 - PROCEDURES:
-     adcISR                                    C3D3       E      14       1   .text       
-     initThermometer                           C3E1      10      16       1   .text       
+     adcISR                                    C3D9       E      14       1   .text       
+     initThermometer                           C3E7      10      16       1   .text       
 - VARIABLES:
      temperature                               100D       2       2       2   .bss        
      _Vector_22                                FFD2       2       2       0   .abs_section_ffd2
@@ -1221,7 +1222,7 @@ MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12dp256.c.o                            590      0      0
-  main.c.o                                    29    507     38
+  main.c.o                                    29    511     40
   Start12.c.o                                  0     57      0
   ticker.asm.o                                 1     57      2
   lcd.asm.o                                    2    179      9
@@ -1234,9 +1235,10 @@ MODULE STATISTIC
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
-  decToASCII_Wrapper WriteLine_Wrapper initLED_C toggleLED_C incrementCounter 
-  isButtonPressed WriteLine1_C WriteLine2_C main initClock incrementHours 
-  incrementMinutes incrementSeconds tickClock adcISR initThermometer int12 
+  delay decToASCII_Wrapper WriteLine_Wrapper initLED_C toggleLED_C 
+  incrementCounter isButtonPressed WriteLine1_C WriteLine2_C main initClock 
+  incrementHours incrementMinutes incrementSeconds tickClock adcISR 
+  initThermometer int12 
 SECTION: ".data"
   line1 ticks VAR00001 temp1 
 SECTION: ".bss"
@@ -1246,7 +1248,7 @@ SECTION: ".init"
   writeLine1 wDo next fill_blanks wEnd delay_10ms delay_5ms delay_50us del1 
   sel_data sel_inst outputByte decToASCII positive next skip 
 SECTION: ".rodata1"
-  STRING.Erguen.Bickici.1 STRING.Tim.Jauch.2 STRING...IT.SS.2025.3 
+  STRING.Erguen.Bickici.1 STRING.Tim.Jauch.2 STRING..c..IT.SS.2025.3 
 SECTION: ".abs_section_8"
   _PORTE 
 SECTION: ".abs_section_9"
@@ -2839,14 +2841,14 @@ OBJECT LIST SORTED BY ADDRESS
      VAR00001                                  1007       1       1       2   .data       
      temp1                                     1008       1       1       0   .data       
      clockEvent                                1009       1       1       3   .bss        
-     mode                                      100A       1       1       3   .bss        
+     mode                                      100A       1       1       4   .bss        
      counter                                   100B       1       1       2   .bss        
      line1Counter                              100C       1       1       2   .bss        
      temperature                               100D       2       2       2   .bss        
      end                                       100F       1       1       5   .common     
      i                                         1010       1       1       5   .common     
-     line2                                     1011      11      17      29   .common     
-     hours                                     1022       1       1       6   .common     
+     line2                                     1011      11      17      26   .common     
+     hours                                     1022       1       1       5   .common     
      minutes                                   1023       1       1       5   .common     
      seconds                                   1024       1       1       5   .common     
      Init                                      C000      29      41       1   .init       
@@ -2876,32 +2878,33 @@ OBJECT LIST SORTED BY ADDRESS
      skip                                      C149      1A      26       0   .init       
      STRING.Erguen.Bickici.1                   C172       F      15       1   .rodata1    
      STRING.Tim.Jauch.2                        C181       A      10       1   .rodata1    
-     STRING...IT.SS.2025.3                     C18B       D      13       1   .rodata1    
-     decToASCII_Wrapper                        C198       A      10       4   .text       
-     WriteLine_Wrapper                         C1A2       A      10       2   .text       
-     initLED_C                                 C1AC      14      20       1   .text       
-     toggleLED_C                               C1C0       8       8       2   .text       
-     incrementCounter                          C1C8      10      16       2   .text       
-     isButtonPressed                           C1D8       1       1       4   .text       
-     WriteLine1_C                              C1D9      1A      26       2   .text       
-     WriteLine2_C                              C1F3     100     256       5   .text       
-     main                                      C2F3      A0     160       2   .text       
-     initClock                                 C393       F      15       1   .text       
-     incrementHours                            C3A2       E      14       2   .text       
-     incrementMinutes                          C3B0      10      16       2   .text       
-     incrementSeconds                          C3C0      10      16       2   .text       
-     tickClock                                 C3D0       3       3       1   .text       
-     adcISR                                    C3D3       E      14       1   .text       
-     initThermometer                           C3E1      10      16       1   .text       
-     VAR00002                                  C3F1       1       1       1   .const      
-     VAR00003                                  C3F2       1       1       0   .const      
-     VAR00004                                  C3F3       1       1       0   .const      
-     VAR00005                                  C3F4       1       1       0   .const      
-     VAR00006                                  C3F5       1       1       1   .const      
-     VAR00007                                  C3F6       1       1       0   .const      
-     VAR00008                                  C3F7       1       1       0   .const      
-     VAR00009                                  C3F8       1       1       0   .const      
-     VAR00010                                  C3F9       1       1       0   .const      
+     STRING..c..IT.SS.2025.3                   C18B       F      15       1   .rodata1    
+     delay                                     C19A      1F      31       2   .text       
+     decToASCII_Wrapper                        C1B9       A      10       4   .text       
+     WriteLine_Wrapper                         C1C3       A      10       2   .text       
+     initLED_C                                 C1CD      14      20       1   .text       
+     toggleLED_C                               C1E1       8       8       2   .text       
+     incrementCounter                          C1E9      10      16       2   .text       
+     isButtonPressed                           C1F9       1       1       4   .text       
+     WriteLine1_C                              C1FA      1A      26       2   .text       
+     WriteLine2_C                              C214      CB     203       3   .text       
+     main                                      C2DF      BA     186       3   .text       
+     initClock                                 C399       F      15       1   .text       
+     incrementHours                            C3A8       E      14       2   .text       
+     incrementMinutes                          C3B6      10      16       2   .text       
+     incrementSeconds                          C3C6      10      16       2   .text       
+     tickClock                                 C3D6       3       3       1   .text       
+     adcISR                                    C3D9       E      14       1   .text       
+     initThermometer                           C3E7      10      16       1   .text       
+     VAR00002                                  C3F7       1       1       1   .const      
+     VAR00003                                  C3F8       1       1       0   .const      
+     VAR00004                                  C3F9       1       1       0   .const      
+     VAR00005                                  C3FA       1       1       0   .const      
+     VAR00006                                  C3FB       1       1       1   .const      
+     VAR00007                                  C3FC       1       1       0   .const      
+     VAR00008                                  C3FD       1       1       0   .const      
+     VAR00009                                  C3FE       1       1       0   .const      
+     VAR00010                                  C3FF       1       1       0   .const      
      _Vector_22                                FFD2       2       2       0   .abs_section_ffd2
      int12                                     FFE6       2       2       0   .text       
 
@@ -2918,13 +2921,13 @@ thermometer.c.o:
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC3FA ---- SIZE       4 ---
+------- ROM-ADDRESS: 0xC400 ---- SIZE       4 ---
 Filling bytes inserted
  00061000
-------- ROM-ADDRESS: 0xC3FE ---- RAM-ADDRESS: 0x1000 ---- SIZE       6 ---
+------- ROM-ADDRESS: 0xC404 ---- RAM-ADDRESS: 0x1000 ---- SIZE       6 ---
 Name of initialized Object : line1
  C172C181C1 8B
-------- ROM-ADDRESS: 0xC404 ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xC40A ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -2932,7 +2935,7 @@ Filling bytes inserted
 OBJECT-DEPENDENCIES SECTION
 ---------------------------------------------------------------------------------------------
 line1                     USES STRING.Erguen.Bickici.1 STRING.Tim.Jauch.2 
-                                STRING...IT.SS.2025.3 
+                                STRING..c..IT.SS.2025.3 
 Init                      USES _startupData 
 _Startup                  USES _startupData __SEG_END_SSTACK Init 
 initTicker                USES ticks 
@@ -2951,11 +2954,11 @@ initLED_C                 USES _DDRJ _PTJ _DDRAB _DDRP _PTP
 toggleLED_C               USES _PORTAB 
 WriteLine1_C              USES line1Counter line1 WriteLine_Wrapper 
                                 incrementCounter 
-WriteLine2_C              USES hours line2 decToASCII_Wrapper minutes seconds 
+WriteLine2_C              USES line2 hours decToASCII_Wrapper minutes seconds 
                                 temperature end i WriteLine_Wrapper 
 main                      USES initLED_C initLCD initTicker initClock 
-                                initThermometer WriteLine1_C WriteLine2_C main _PTH 
-                                isButtonPressed mode toggleLED_C incrementHours 
+                                initThermometer WriteLine1_C WriteLine2_C main mode 
+                                toggleLED_C delay _PTH isButtonPressed incrementHours 
                                 incrementMinutes incrementSeconds clockEvent tickClock counter 
                                 incrementCounter 
 initClock                 USES hours minutes seconds 
@@ -3006,9 +3009,11 @@ DEPENDENCY TREE
  |  |  |       
  |  |  +- WriteLine_Wrapper    (see above)
  |  |     
- |  +- isButtonPressed     
- |  |    
  |  +- toggleLED_C         
+ |  |    
+ |  +- delay               
+ |  |    
+ |  +- isButtonPressed     
  |  |    
  |  +- incrementHours      
  |  |    
@@ -3114,6 +3119,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 9
-Total size of all blocks to be downloaded: 1036
+Number of blocks to be downloaded: 8
+Total size of all blocks to be downloaded: 1042
 

@@ -1,3 +1,7 @@
+/*   Lab Task 4.2
+   Created by: Ergün Bickici & Tim Jauch 
+*/
+
 #include <hidef.h>                              // Common defines
 #include <mc9s12dp256.h>                        // CPU specific defines
 
@@ -49,14 +53,14 @@ void initThermometer(void)
 
 void convertTemperature(void) {
     asm {
-      LDY raw
+      LDY raw           // averaged ADC reading (0...1023)
     
-      LDY #100  ;multiply by 100
-      EMULS
+      LDY #100          // multiply by 100
+      EMULS             // signed multiply by 16, so result is 32-bit that end up in D (low half) and Y (high half)
       LDX   #1023
-      EDIV
+      EDIV              // Dividing the 32-bit by 1023 rescales back down between 0...100
       TFR   Y, D
-      SUBD  #30
+      SUBD  #30         // Subtracting with 30, cause the temp range is -30...+70°C
       
       STD temperature
     }

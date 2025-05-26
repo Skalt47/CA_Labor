@@ -8,7 +8,7 @@
 ;
 ;   Author:   R. Keller, HS-Esslingen
 ;            (based on code provided by J. Friedrich, W. Zimmermann)
-;   Modified: Ergün Bickici & Tim Jauch (Pair coding Discord)
+;   Modified: Ergün Bickici & Tim Jauch
 ;
 
 ; export symbols

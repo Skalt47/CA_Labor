@@ -1,3 +1,7 @@
+/*   Lab Task 4.2
+   Created by: Ergün Bickici & Tim Jauch 
+*/
+
 #include <hidef.h>                              // Common defines
 #include <mc9s12dp256.h>                        // CPU specific defines
 
