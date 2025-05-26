@@ -19,49 +19,19 @@
 ; include derivative specific macros
         INCLUDE 'mc9s12dp256.inc'
 
-; Defines
-SPEED_X:    EQU     1000                    ; Outer loop counter value
-SPEED_Y:    EQU     10000                   ; Inner loop counter value
+.data: SECTION
+counter: DS.B 1
 
-; RAM: Variable data section
-.data:  SECTION
-counter_L:  DS.B    1                       ; Low byte of counter (8 bits)
-counter_H:  DS.B    1                       ; High byte of counter (8 bits)
-
-; ROM: Constant data
 .const: SECTION
+msg:  DC.B "Hello LCD!", 0
 
-; ROM: Code section
-.init:  SECTION
-
-main:                                       ; Begin of the program
+.init: SECTION
 Entry:
-        LDS     #__SEG_END_SSTACK           ; Initialize stack pointer
-        CLI                                 ; Enable interrupts, needed for debugger
-        
-        LDAA    #$FF                        ; Load all bits to 1 in A
-        STAA    DDRB                        ; Set PORTB pins as outputs
+main:
+  LDX   #msg
+  LDAB  #0
+  JSR   writeLine
 
-loop:
-        LDAA    #$FF                        ; Load all bits to 1 in A
-        STAA    PORTB                       ; Set PORTB outputs to high (LEDs ON)
-        JSR     delay                       ; Call delay subroutine
-  
-        LDAA    #$00                        ; Load all bits to 0 in A
-        STAA    PORTB                       ; Set PORTB outputs to low (LEDs OFF)
-        JSR     delay                       ; Call delay subroutine
-  
-        BRA     loop                        ; Branch back to loop
 
-delay:
-        LDX     #SPEED_X                    ; Load outer loop counter
-outer_loop:
-        LDY     #SPEED_Y                    ; Load inner loop counter
-inner_loop:
-        DEY                                 ; Decrement Y
-        BNE     inner_loop                  ; Branch if not zero
-        
-        DEX                                 ; Decrement X
-        BNE     outer_loop                  ; Branch if not zero
-        
-        RTS                                 ; Return from subroutine
+back:
+  BRA back   
