@@ -2,11 +2,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{setspace}
-\usepackage{geometry}
-\geometry{a4paper, top=3cm, bottom=3cm, left=3cm, right=3cm}
-\usepackage{lipsum} % Für Blindtext (Testseite)
+\usepackage{lipsum}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{capt-of}
+\usepackage{geometry}
+\geometry{a4paper, top=3cm, bottom=3cm, left=3cm, right=3cm}
+
 
 % Konfiguration für den Assembler-Code
 \definecolor{mygreen}{rgb}{0,0.6,0}
@@ -49,8 +53,17 @@
 \newpage
 
 % ---------------------------------------
-% Testseite mit Inhalt
+% Abbildungsverzeichnis
 % ---------------------------------------
+\listoffigures
+\newpage
+
+% ---------------------------------------
+% Tabellenverzeichnis
+% ---------------------------------------
+\listoftables
+\newpage
+
 \section{Requirements}
 The requirements for the clock and the thermometer are as follows:
 The current time should be displayed on the LCD in the format HH:MM:SS and updated every second (hour range: 0–23, minute and second range: 0–59). The LED on Port B.0 should toggle every second. For more details, refer to chapter A.2 in the appendix.
@@ -110,6 +123,14 @@ main.c, constant.h & SELECT12HOURS & unsigned char & switch between 12/24h model
 \end{table}
 \newpage
 \section{Module Overview}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{diagrams/moduleOverview.png}
+    \caption{Module Overview}
+    \label{fig:MainModuleOverview}
+\end{figure}
+
 \newpage
 \section{Interface Descriptions of All Subroutines}
 
@@ -237,5 +258,62 @@ main.c, constant.h & SELECT12HOURS & unsigned char & switch between 12/24h model
         \item \textbf{Return:} -
     \end{itemize}
 \end{description}
+\newpage
+\section{Flow charts}
+\subsection{Main}
+% Erstes Bild
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{diagrams/flowChart1.png}
+\end{center}
+
+\clearpage
+
+% Zweites Bild
+\begin{center}
+    \hspace{2cm}
+    \includegraphics[width=0.7\textwidth]{diagrams/flowChart2.png}
+\end{center}
+
+% Gemeinsame Caption direkt unter dem zweiten Bild
+\begin{center}
+    \captionof{figure}{Main}
+    \label{fig:MainFlowcharts}
+\end{center}
+
+\newpage
+
+\subsection{Thermometer}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{diagrams/thermometer.png}
+    \caption{Thermometer}
+    \label{fig:MainThermometer}
+\end{figure}
+
+\newpage
+
+\subsection{Ticker}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{diagrams/ticker.png}
+    \caption{Ticker}
+    \label{fig:MainTicker}
+\end{figure}
+
+\subsection{Clock}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{diagrams/clock.png}
+    \caption{Clock}
+    \label{fig:MainClock}
+\end{figure}
+
+\subsection{DecToASCII}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{diagrams/decToASCII.png}
+    \caption{DecToASCII}
+    \label{fig:MainDecToASCII}
+\end{figure}
 
 \end{document}
