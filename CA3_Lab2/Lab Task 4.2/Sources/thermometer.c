@@ -1,5 +1,5 @@
 /*   Lab Task 4.2
-   Created by: Ergün Bickici & Tim Jauch 
+     Created by: Ergün Bickici & Tim Jauch 
 */
 
 #include <hidef.h>                              // Common defines

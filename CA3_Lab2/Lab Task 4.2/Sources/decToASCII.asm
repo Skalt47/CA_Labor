@@ -26,6 +26,8 @@
 ; ROM: Code section
 .init: SECTION
 
+; -----------------------------------------------------------------------------
+
 ; Public interface function: decToASCII  convert given decimal (time) in ASCII (called before time will be printed)
 ; Parameter: -
 ; Return: -

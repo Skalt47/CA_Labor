@@ -27,7 +27,7 @@
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-// ****************************************************************************
+// -----------------------------------------------------------------------------
 // Function prototype(s)
 // Note: Only void Fcn(void) assembler functions can be called from C directly.
 //       For non-void functions a C wrapper function is required.
@@ -73,7 +73,7 @@ void WriteLine_Wrapper(char *text, char line)
     }
 }
 
-// ****************************************************************************
+// -----------------------------------------------------------------------------
 
 // Public interface function: initLED_C initialize port of output for LEDs und LCD (called once)
 // Parameter: -
@@ -103,7 +103,7 @@ void toggleLED_C(char leds)
     PORTB = PORTB ^ leds;
 }
 
-// ****************************************************************************
+// -----------------------------------------------------------------------------
 
 // Public interface function: incrementCounter move to next field in array with strings for line 0 LCD (methode call)
 // Parameter: unsigned char pointer, unsigned char max value for counter
@@ -118,7 +118,7 @@ void incrementCounter(unsigned char *counter, unsigned char max) {
     }
 }
 
-// ****************************************************************************
+// -----------------------------------------------------------------------------
 extern unsigned char hours;
 extern unsigned char minutes;
 extern unsigned char seconds;
@@ -129,12 +129,12 @@ void incrementMinutes(void);
 void incrementSeconds(void);
 void tickClock(void);
 
-// ****************************************************************************
+// -----------------------------------------------------------------------------
 extern int temperature;
 
 void initThermometer(void);
 
-// ****************************************************************************
+// -----------------------------------------------------------------------------
 
 // Global variables
 unsigned char clockEvent = 0;
@@ -176,6 +176,7 @@ char line2[17];
 
 
 
+// -----------------------------------------------------------------------------
 
 // Public interface function: WriteLine2_C preparing time/temperature to be printed in LCD (methode call)
 // Parameter: -
@@ -244,7 +245,7 @@ void WriteLine2_C() {
     WriteLine_Wrapper(line2, 1);
 }
 
-// ****************************************************************************
+// -----------------------------------------------------------------------------
 void main(void) 
 {   
     EnableInterrupts;                   // Global interrupt enable
