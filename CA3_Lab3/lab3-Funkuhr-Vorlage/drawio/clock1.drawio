@@ -1,0 +1,80 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:139.0) Gecko/20100101 Firefox/139.0" version="27.1.6">
+  <diagram name="Seite-1" id="vKhFG0yD0sFM96mjJ53Z">
+    <mxGraphModel dx="1375" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="saFJeLpI3H_wUORphgzt-1" value="initClock()" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="125" y="80" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-2" value="setClock" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="315" y="80" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-3" value="time" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="125" y="380" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-4" value="&lt;div&gt;displayTimeClock()&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="120" y="220" width="130" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-5" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="saFJeLpI3H_wUORphgzt-1" target="saFJeLpI3H_wUORphgzt-4" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="435" y="340" as="sourcePoint" />
+            <mxPoint x="485" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-6" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="saFJeLpI3H_wUORphgzt-2" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="545" y="340" as="sourcePoint" />
+            <mxPoint x="375" y="200" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-7" value="return uptime" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="125" y="490" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-8" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="saFJeLpI3H_wUORphgzt-3" target="saFJeLpI3H_wUORphgzt-7" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="435" y="660" as="sourcePoint" />
+            <mxPoint x="485" y="610" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-9" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="saFJeLpI3H_wUORphgzt-7" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="435" y="660" as="sourcePoint" />
+            <mxPoint x="185" y="580" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-10" value="hrs = hours&lt;div&gt;mins=minutes&lt;/div&gt;&lt;div&gt;secs=seconds&lt;/div&gt;&lt;div&gt;ticks=0&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="315" y="200" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-11" value="displayTimeClock" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="515" y="80" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-12" value="writeLine()" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="515" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-13" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="saFJeLpI3H_wUORphgzt-12" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="825" y="550" as="sourcePoint" />
+            <mxPoint x="575" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-14" value="sprintf()" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="515" y="190" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-15" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="saFJeLpI3H_wUORphgzt-11" target="saFJeLpI3H_wUORphgzt-14" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="825" y="360" as="sourcePoint" />
+            <mxPoint x="875" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="saFJeLpI3H_wUORphgzt-16" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="saFJeLpI3H_wUORphgzt-14" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="825" y="360" as="sourcePoint" />
+            <mxPoint x="575" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -18,7 +18,7 @@
         INCLUDE 'mc9s12dp256.inc'
 
 ; Defines
-SEVEN_SEGS_OFF  EQU 1                   ; Uncomment this to turn seven segment display off
+;SEVEN_SEGS_OFF  EQU 1                   ; Uncomment this to turn seven segment display off
 
 ; RAM: Variable data section
 .data:  SECTION
@@ -41,13 +41,13 @@ initLED:
         MOVB #$FF, DDRB                 ; Initialize port B as outputs
         CLR  PORTB                      ; and turn LEDs off
 
-   ifdef SEVEN_SEGS_OFF
+   ;ifdef SEVEN_SEGS_OFF
         MOVB #$0F, DDRP                 ; Port P.3..0 as outputs (seven segment display control)
         MOVB #$0F, PTP                  ; Turn off seven segment display
-   endif
+  ; endif
         RTS
 
-
+;**************************************************************
 ; toggleLED ... Toggle LEDs specified by bitmask
 ; Parameter: B ... bitmask (1 ... toggle, 0 ... unchanged)
 ; Return:    -
@@ -56,6 +56,7 @@ toggleLED:
         STAB PORTB
         RTS
 
+;**************************************************************
 ; setLED ... Set LEDs specified by bitmask
 ; Parameter: B ... bitmask (1 ... set, 0 ... unchanged)
 ; Return:    -
@@ -64,6 +65,7 @@ setLED:
         STAB PORTB
         RTS
 
+;**************************************************************
 ; clrLED ... Clear LEDs specified by bitmask
 ; Parameter: B ... bitmask (1 ... clear, 0 ... unchanged)
 ; Return:    -

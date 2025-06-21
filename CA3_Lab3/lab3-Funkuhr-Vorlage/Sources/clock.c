@@ -4,7 +4,7 @@
     (C) 2018 J. Friedrich, W. Zimmermann Hochschule Esslingen
 
     Author:   W.Zimmermann, Jun  10, 2016
-    Modified: -
+    Modified: Ergün Bickici & Tim Jauch
 */
 
 #include <stdio.h>
@@ -41,16 +41,17 @@ void tick10ms(void)
 {   if (++ticks >= ONESEC)                      // Check if one second has elapsed
     {   clockEvent = SECONDTICK;                // ... if yes, set clock event
         ticks=0;
+        USDE_Pressed();
         setLED(0x01);                           // ... and turn on LED on port B.0 for 200msec
     } else if (ticks == MSEC200)
     {   clrLED(0x01);
-    }
+    }                                              
     uptime = uptime + 10;                       // Update CPU time base
 
     dcf77Event = sampleSignalDCF77(uptime);     // Sample the DCF77 signal
 
     //--- Add code here, which shall be executed every 10ms -------------------
-    // ???
+    //USDE();
     //--- End of user code
 }
 
@@ -82,7 +83,9 @@ void setClock(char hours, char minutes, char seconds)
 {   hrs  = hours;
     mins = minutes;
     secs = seconds;
-    ticks = 0;
+    if(seconds == 0){
+      ticks = 0;
+    }
 }
 
 // ****************************************************************************
@@ -91,7 +94,12 @@ void setClock(char hours, char minutes, char seconds)
 // Returns:     -
 void displayTimeClock(void)
 {   char uhrzeit[32] = "00:00:00";
-    (void) sprintf(uhrzeit, "%02d:%02d:%02d", hrs, mins, secs );
+    if(us_on) {
+      (void) sprintf(uhrzeit, "US %02d:%02d:%02d", hrs, mins, secs );
+    } 
+    else {
+      (void) sprintf(uhrzeit, "DE %02d:%02d:%02d", hrs, mins, secs );
+    }
     writeLine(uhrzeit, 0);
 }
 
