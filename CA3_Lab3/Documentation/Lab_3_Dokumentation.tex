@@ -92,6 +92,10 @@
 
 \section{User Interface Description}
 
+% ---------------------------------------
+% 2.1 LCD Display
+% ---------------------------------------
+
 \subsection{LCD Display}
 \begin{itemize}
     \item The first line of the Dragon12 LCD displays the current time in the format \texttt{hh:mm:ss}.
@@ -99,6 +103,10 @@
     \item The day of the week (e.g., \texttt{Sun}, \texttt{Mon}, ...) is displayed in front of the date.
     \item The active time zone is indicated by either \texttt{DE} or \texttt{US} on the LCD.
 \end{itemize}
+
+% ---------------------------------------
+% 2.2 LED Indicators
+% ---------------------------------------
 
 \subsection{LED Indicators}
 \begin{itemize}
@@ -109,6 +117,10 @@
     \item The LED on Port \texttt{B.3} turns on when a complete and valid DCF77 time and date frame is successfully decoded.  
     It turns off immediately if the received data is invalid or missing.
 \end{itemize}
+
+% ---------------------------------------
+% 2.3 Control Button
+% ---------------------------------------
 
 \subsection{Control Button}
 \begin{itemize}
@@ -134,6 +146,10 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
 
 \section{Data Dictionary}
 
+% ---------------------------------------
+% 4.1 List of Global Variables
+% ---------------------------------------
+
 \subsection{List of Global Variables}
 
 \begin{table}[H]
@@ -153,6 +169,9 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
 \caption{Global variables used across modules}
 \end{table}
 
+% ---------------------------------------
+% 4.2 Hardware Resources
+% ---------------------------------------
 
 \subsection{Hardware Resources}
 
@@ -191,158 +210,129 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
 \newpage
 
 % ---------------------------------------
-% 6. Interface descriptions of all Subroutines
+% 6. Interface Descriptions of All Subroutines
 % ---------------------------------------
 
 \section{Interface Descriptions of All Subroutines}
 
+% ---------------------------------------
+% 6.1 main.c
+% ---------------------------------------
+
 \subsection{main.c}
 \begin{itemize}
     \item \textbf{main()}  
-    Initializes all modules and calls the corresponding subroutines.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
+    Initializes all modules and calls the corresponding subroutines.
 \end{itemize}
+
+% ---------------------------------------
+% 6.2 clock.c
+% ---------------------------------------
 
 \subsection{clock.c}
 \begin{itemize}
     \item \textbf{initClock()}  
-    Loads the initial time and weekday.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
+    Loads the initial time and weekday.
 
     \item \textbf{tick10ms()}  
-    Called every 10\,ms to advance internal clock logic.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
+    Called every 10\,ms to advance internal clock logic.
 
     \item \textbf{processEventsClock(clockEvent)}  
-    Called every second to update internal time values based on the event.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} \texttt{clockEvent} (typically \texttt{SECONDTICK})  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
+    Updates internal time based on received event.
 
     \item \textbf{setClock(hours, minutes, seconds)}  
-    Allows other modules (e.g., DCF77) to set the time.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} \texttt{int hours, minutes, seconds}  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
+    Sets the current time, e.g. based on DCF77 data.
 
     \item \textbf{tzName()}  
-    Returns the current time zone name.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} \texttt{const char*}
-    \end{itemize}
+    Returns the time zone abbreviation.
 
     \item \textbf{tzHours()}  
-    Returns the current time zone offset in hours.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} \texttt{int}
-    \end{itemize}
+    Returns the time zone offset.
 
     \item \textbf{displayTimeClock()}  
-    Displays time on LCD (line 0).  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
+    Writes current time to the LCD using \texttt{writeLine()}.
 
     \item \textbf{time()}  
-    Returns the current CPU time base in milliseconds.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} \texttt{unsigned long}
-    \end{itemize}
+    Returns the system uptime in milliseconds.
 \end{itemize}
+
+% ---------------------------------------
+% 6.3 dcf77.c
+% ---------------------------------------
 
 \subsection{dcf77.c}
 \begin{itemize}
+    \item \textbf{initDCF77()}  
+    Initializes the DCF77 module and decoder state.
+
     \item \textbf{initializePort()}  
-    Initializes the input port for the DCF77 signal.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
+    Configures Port H.0 for input signal polling.
 
     \item \textbf{readPort()}  
-    Reads the DCF77 signal level from the input port.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} \texttt{int} (0 = Low, $>$ 0 = High)
-    \end{itemize}
-
-    \item \textbf{initDCF77()}  
-    Initializes the DCF77 module.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
-
-    \item \textbf{getDaysInMonth(month, year)}  
-    Returns number of days for a given month and year.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} \texttt{int month, year}  
-        \item[] \textbf{Returns:} \texttt{int}
-    \end{itemize}
-
-    \item \textbf{updateDate()}  
-    Updates date and time based on current time zone.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
-
-    \item \textbf{displayDateDcf77()}  
-    Displays the date decoded from the DCF77 signal on LCD (line 1).  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
+    Reads the DCF77 signal from Port H.0 (0 = LOW, 1 = HIGH).
 
     \item \textbf{sampleSignalDCF77(currentTime)}  
-    Evaluates DCF77 signal and detects events. Called every 10\,ms.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} \texttt{unsigned long currentTime}  
-        \item[] \textbf{Returns:} \texttt{dcf77Event}
-    \end{itemize}
+    Called every 10\,ms. Measures pulse durations and returns DCF77 events.
 
     \item \textbf{processEventsDCF77(event)}  
-    Processes decoded events using DCF77 state machine.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} \texttt{dcf77Event event}  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
-    \newpage
+    Processes signal states via a DCF77 event state machine.
+
+    \item \textbf{updateDate()}  
+    Updates system date and time, and refreshes the display.
+
+    \item \textbf{displayDateDcf77()}  
+    Displays the decoded date on the LCD using \texttt{writeLine()}.
+
     \item \textbf{setDateDcf77()}  
-    Transfers data from buffer to global variables.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} --  
-        \item[] \textbf{Returns:} \texttt{int} (1 = valid, 0 = invalid)
-    \end{itemize}
+    Validates the received data and updates internal variables.
 
     \item \textbf{verifyValue(start, end)}  
-    Decodes and checks BCD-coded value including parity.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} \texttt{unsigned char start, end}  
-        \item[] \textbf{Returns:} \texttt{int} (1 = valid, 0 = invalid)
-    \end{itemize}
+    Verifies a BCD-coded value including parity check.
 
     \item \textbf{setTimeZone(timeZone, hours, minutes)}  
-    Sets the system time zone.  
-    \begin{itemize}
-        \item[] \textbf{Parameters:} \texttt{TIMEZONE timeZone, char hours, minutes}  
-        \item[] \textbf{Returns:} --
-    \end{itemize}
+    Sets the system time zone and applies the offset.
+\end{itemize}
+
+% ---------------------------------------
+% 6.4 lcd.asm
+% ---------------------------------------
+
+\subsection{lcd.asm}
+\begin{itemize}
+    \item \textbf{writeLine(line, text)}  
+    Displays a text string on the specified LCD line.
+\end{itemize}
+
+% ---------------------------------------
+% 6.5 led.asm
+% ---------------------------------------
+
+\subsection{led.asm}
+\begin{itemize}
+    \item \textbf{initLED()}  
+    Initializes the LED output pins on Port B.
+
+    \item \textbf{setLED0(on)}  
+    Toggles LED on Port B.0 every second.
+
+    \item \textbf{setLED1(signal)}  
+    Reflects raw DCF77 signal on Port B.1.
+
+    \item \textbf{setLED2(error)}  
+    Lights up Port B.2 if invalid data is detected.
+
+    \item \textbf{setLED3(valid)}  
+    Turns on Port B.3 when a valid DCF77 frame is decoded.
+\end{itemize}
+
+% ---------------------------------------
+% 6.6 button.asm
+% ---------------------------------------
+
+\subsection{button.asm}
+\begin{itemize}
+    \item \textbf{USDE\_Pressed()}  
+    Detects button press on PTH3 to toggle between DE and US time zones.
 \end{itemize}
 
 \newpage
@@ -353,6 +343,10 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
 
 \section{Flow Charts}
 
+% ---------------------------------------
+% 7.1 Main
+% ---------------------------------------
+
 \subsection{Main}
 
 \begin{figure}[H]
@@ -361,6 +355,10 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
     \caption{Main}
     \label{fig:Main}
 \end{figure}
+
+% ---------------------------------------
+% 7.2 Clock
+% ---------------------------------------
 
 \subsection{Clock}
 
@@ -377,6 +375,10 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
     \caption{Clock 2}
     \label{fig:Clock2}
 \end{figure}
+
+% ---------------------------------------
+% 7.3 DCF77
+% ---------------------------------------
 
 \subsection{DCF77}
 
