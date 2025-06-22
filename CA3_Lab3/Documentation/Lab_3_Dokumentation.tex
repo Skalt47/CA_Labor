@@ -1,0 +1,474 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{setspace}
+\usepackage{lipsum}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{capt-of}
+\usepackage{geometry}
+\usepackage{tabularx}
+\usepackage{array}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\geometry{a4paper, top=3cm, bottom=3cm, left=3cm, right=3cm}
+
+
+\begin{document}
+
+% ---------------------------------------
+% Deckblatt
+% ---------------------------------------
+\thispagestyle{empty}
+\vspace*{3cm}
+\begin{center}
+    {\LARGE\textbf{Lab 3: Radio-controlled Clock with}}\\
+    \vspace{0.3cm}
+    {\LARGE\textbf{DCF77}}\\
+    \vspace{1cm}
+    {\LARGE\textbf{Dokumentation}}\\
+    \vspace{3cm}
+    \textbf{Tim Jauch}\\
+    \vspace{0.5cm}
+    \textbf{Ergün Bickici}
+\end{center}
+
+
+
+\newpage
+
+% ---------------------------------------
+% Inhaltsverzeichnis
+% ---------------------------------------
+\tableofcontents
+\newpage
+
+% ---------------------------------------
+% Abbildungsverzeichnis
+% ---------------------------------------
+\listoffigures
+\newpage
+
+% ---------------------------------------
+% Tabellenverzeichnis
+% ---------------------------------------
+\listoftables
+\newpage
+
+% ---------------------------------------
+% 1. Requirements
+% ---------------------------------------
+
+\section{Requirements}
+\begin{itemize}
+    \item The first line of the Dragon12’s LCD shall display the time in the format: \texttt{hh:mm:ss}.  
+    The second line shall show the date in the format: \texttt{dd.mm.yyyy}.  
+    Manual time setting, as implemented in Lab 2, is no longer required.
+
+    \item Since DCF77 signal reception may occasionally fail (e.g., due to poor radio conditions in reinforced concrete buildings or during transmitter maintenance), the internal timer-based clock from Lab 2 remains active.  
+    The DCF77 signal is only used to adjust the time once per minute and to display the date.  
+    If the DCF77 data becomes unavailable, the system continues running solely on the internal timer.
+
+    \item The internal timer clock shall toggle the LED connected to Port B.0 once per second.
+
+    \item The LED on Port B.1 shall reflect the raw DCF77 signal:  
+    it turns on when the signal is low, and off when it is high.  
+    As a result, this LED will toggle once per second when the DCF77 signal is being received.
+
+    \item The LED on Port B.3 shall be turned on when a complete and valid DCF77 time and date message has been successfully decoded.  
+    It turns off immediately if no valid data is received or the data is corrupted.
+
+    \item The DCF77 signal is connected to Port H.0 on the real Dragon12 board.  
+    Due to potential signal spikes and jittering edges, it is recommended to poll the signal every 10 ms instead of relying on Port H interrupts.
+\end{itemize}
+
+\newpage
+
+% ---------------------------------------
+% 2. User Interface Description
+% ---------------------------------------
+
+\section{User Interface Description}
+
+\subsection{LCD Display}
+\begin{itemize}
+    \item The first line of the Dragon12 LCD displays the current time in the format \texttt{hh:mm:ss}.
+    \item The second line shows the date in the format \texttt{dd.mm.yyyy}.
+    \item The day of the week (e.g., \texttt{Sun}, \texttt{Mon}, ...) is displayed in front of the date.
+    \item The active time zone is indicated by either \texttt{DE} or \texttt{US} on the LCD.
+\end{itemize}
+
+\subsection{LED Indicators}
+\begin{itemize}
+    \item The LED connected to Port \texttt{B.0} toggles once per second, driven by the internal timer clock.
+    \item The LED on Port \texttt{B.1} reflects the raw DCF77 signal level: it turns on when the signal is low and off when the signal is high.  
+    This results in a 1 Hz blinking pattern during proper DCF77 reception.
+    \item The LED on Port \texttt{B.2} lights up when an error is detected and remains on until valid data is received.
+    \item The LED on Port \texttt{B.3} turns on when a complete and valid DCF77 time and date frame is successfully decoded.  
+    It turns off immediately if the received data is invalid or missing.
+\end{itemize}
+
+\subsection{Control Button}
+\begin{itemize}
+    \item The button connected to \texttt{PTH3} toggles between the MET and EST time zones.
+\end{itemize}
+
+\newpage
+
+% ---------------------------------------
+% 3. Debugging
+% ---------------------------------------
+
+\section{Debugging}
+
+No debugging was required, as all provided code segments functioned correctly.  
+Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files had to be implemented.
+
+\newpage
+
+% ---------------------------------------
+% 4. Data Dictionary
+% ---------------------------------------
+
+\section{Data Dictionary}
+
+\subsection{List of Global Variables}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{|L{3.5cm}|L{2.8cm}|L{1.8cm}|X|}
+\hline
+\textbf{Module(s)} & \textbf{Variable} & \textbf{Type} & \textbf{Purpose} \\
+\hline
+\texttt{clock.c}, \texttt{main.c} & \texttt{clockEvent} & \texttt{enum} & Defines clock event types (e.g., \texttt{SET}, \texttt{TICK}, \texttt{ALARM}) \\
+\hline
+\texttt{clock.c}, \texttt{dcf77.c} & \texttt{dcf77TimeZone} & \texttt{enum} & Indicates selected time zone: \texttt{MET} or \texttt{EST} \\
+\hline
+\texttt{clock.c}, \texttt{dcf77.c}, \texttt{main.c} & \texttt{dcf77Event} & \texttt{enum} & Represents different signal states or transitions from the DCF77 decoder \\
+\hline
+\end{tabularx}
+\caption{Global variables used across modules}
+\end{table}
+
+
+\subsection{Hardware Resources}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{|L{3cm}|L{3.5cm}|X|}
+\hline
+\textbf{Module} & \textbf{HCS12 Hardware} & \textbf{Purpose} \\
+\hline
+\texttt{dcf77.c} & Port H & Receives the DCF77 antenna signal via input pin \\
+\hline
+\texttt{led.asm} & Port B & Controls status LEDs (DCF77 signal, timer pulses, error states) \\
+\hline
+\texttt{lcd.asm} & Dragon12 LCD & Displays time, date, weekday, and time zone \\
+\hline
+\end{tabularx}
+\caption{Hardware resources accessed by software modules}
+\end{table}
+
+\newpage
+
+% ---------------------------------------
+% 5. Module overview
+% ---------------------------------------
+
+\section{Module overview}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{diagrams/1.ModuleOverview.png}
+    \caption{Module Overview}
+    \label{fig:ModuleOverview}
+\end{figure}
+
+\newpage
+
+% ---------------------------------------
+% 6. Interface descriptions of all Subroutines
+% ---------------------------------------
+
+\section{Interface Descriptions of All Subroutines}
+
+\subsection{main.c}
+\begin{itemize}
+    \item \textbf{main()}  
+    Initializes all modules and calls the corresponding subroutines.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+\end{itemize}
+
+\subsection{clock.c}
+\begin{itemize}
+    \item \textbf{initClock()}  
+    Loads the initial time and weekday.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+
+    \item \textbf{tick10ms()}  
+    Called every 10\,ms to advance internal clock logic.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+
+    \item \textbf{processEventsClock(clockEvent)}  
+    Called every second to update internal time values based on the event.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} \texttt{clockEvent} (typically \texttt{SECONDTICK})  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+
+    \item \textbf{setClock(hours, minutes, seconds)}  
+    Allows other modules (e.g., DCF77) to set the time.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} \texttt{int hours, minutes, seconds}  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+
+    \item \textbf{tzName()}  
+    Returns the current time zone name.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} \texttt{const char*}
+    \end{itemize}
+
+    \item \textbf{tzHours()}  
+    Returns the current time zone offset in hours.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} \texttt{int}
+    \end{itemize}
+
+    \item \textbf{displayTimeClock()}  
+    Displays time on LCD (line 0).  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+
+    \item \textbf{time()}  
+    Returns the current CPU time base in milliseconds.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} \texttt{unsigned long}
+    \end{itemize}
+\end{itemize}
+
+\subsection{dcf77.c}
+\begin{itemize}
+    \item \textbf{initializePort()}  
+    Initializes the input port for the DCF77 signal.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+
+    \item \textbf{readPort()}  
+    Reads the DCF77 signal level from the input port.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} \texttt{int} (0 = Low, $>$ 0 = High)
+    \end{itemize}
+
+    \item \textbf{initDCF77()}  
+    Initializes the DCF77 module.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+
+    \item \textbf{getDaysInMonth(month, year)}  
+    Returns number of days for a given month and year.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} \texttt{int month, year}  
+        \item[] \textbf{Returns:} \texttt{int}
+    \end{itemize}
+
+    \item \textbf{updateDate()}  
+    Updates date and time based on current time zone.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+
+    \item \textbf{displayDateDcf77()}  
+    Displays the date decoded from the DCF77 signal on LCD (line 1).  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+
+    \item \textbf{sampleSignalDCF77(currentTime)}  
+    Evaluates DCF77 signal and detects events. Called every 10\,ms.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} \texttt{unsigned long currentTime}  
+        \item[] \textbf{Returns:} \texttt{dcf77Event}
+    \end{itemize}
+
+    \item \textbf{processEventsDCF77(event)}  
+    Processes decoded events using DCF77 state machine.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} \texttt{dcf77Event event}  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+    \newpage
+    \item \textbf{setDateDcf77()}  
+    Transfers data from buffer to global variables.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} --  
+        \item[] \textbf{Returns:} \texttt{int} (1 = valid, 0 = invalid)
+    \end{itemize}
+
+    \item \textbf{verifyValue(start, end)}  
+    Decodes and checks BCD-coded value including parity.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} \texttt{unsigned char start, end}  
+        \item[] \textbf{Returns:} \texttt{int} (1 = valid, 0 = invalid)
+    \end{itemize}
+
+    \item \textbf{setTimeZone(timeZone, hours, minutes)}  
+    Sets the system time zone.  
+    \begin{itemize}
+        \item[] \textbf{Parameters:} \texttt{TIMEZONE timeZone, char hours, minutes}  
+        \item[] \textbf{Returns:} --
+    \end{itemize}
+\end{itemize}
+
+\newpage
+
+% ---------------------------------------
+% 7. Flow Charts
+% ---------------------------------------
+
+\section{Flow Charts}
+
+\subsection{Main}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{diagrams/2.Main.png}
+    \caption{Main}
+    \label{fig:Main}
+\end{figure}
+
+\subsection{Clock}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{diagrams/3.clock1.png}
+    \caption{Clock 1}
+    \label{fig:Clock1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{diagrams/4.clock2.png}
+    \caption{Clock 2}
+    \label{fig:Clock2}
+\end{figure}
+
+\subsection{DCF77}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{diagrams/5.dcf771.png}
+    \caption{DCF77 - Part 1}
+    \label{fig:DCF77}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.525\textwidth]{diagrams/6.dcf772.png}
+    \caption{DCF77 - Part 2}
+    \label{fig:DCF772}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{diagrams/7.dcf773.png}
+    \caption{DCF77 - Part 3}
+    \label{fig:DCF773}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{diagrams/eventMinute/eventMinute1.png}
+    \caption{Event Minute – Part 1}
+    \label{fig:eventMinute1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{diagrams/eventMinute/eventMinute2.png}
+    \caption{Event Minute – Part 2}
+    \label{fig:eventMinute2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{diagrams/eventMinute/eventMinute3.png}
+    \caption{Event Minute – Part 3}
+    \label{fig:eventMinute3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{diagrams/eventMinute/eventMinute4.png}
+    \caption{Event Minute – Part 4}
+    \label{fig:eventMinute4}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{diagrams/eventMinute/eventMinute5.png}
+    \caption{Event Minute – Part 5}
+    \label{fig:eventMinute5}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{diagrams/9.USDE_Pressed.png}
+    \caption{USDE Pressed}
+    \label{fig:USDEPressed}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{diagrams/10.isLeap.png}
+    \caption{isLeap}
+    \label{fig:isLeap}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{diagrams/11.daysInMonth.png}
+    \caption{daysInMonth}
+    \label{fig:daysInMonth}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{diagrams/12.adjustDate.png}
+    \caption{adjustDate}
+    \label{fig:adjustDate}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{diagrams/13.USDE.png}
+    \caption{USDE}
+    \label{fig:USDE}
+\end{figure}
+
+\end{document}
