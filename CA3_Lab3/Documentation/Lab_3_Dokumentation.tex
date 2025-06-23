@@ -81,7 +81,7 @@
     It turns off immediately if no valid data is received or the data is corrupted.
 
     \item The DCF77 signal is connected to Port H.0 on the real Dragon12 board.  
-    Due to potential signal spikes and jittering edges, it is recommended to poll the signal every 10 ms instead of relying on Port H interrupts.
+    Due to potential signal spikes and jittering edges, the Signal is polled every 10 ms instead of relying on Port H interrupts.
 \end{itemize}
 
 \newpage
@@ -124,7 +124,7 @@
 
 \subsection{Control Button}
 \begin{itemize}
-    \item The button connected to \texttt{PTH3} toggles between the MET and EST time zones.
+    \item The button connected to \texttt{PTH3} can be used to switch between US (East Coast) and DE time.
 \end{itemize}
 
 \newpage
@@ -161,7 +161,7 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
 \hline
 \texttt{clock.c}, \texttt{main.c} & \texttt{clockEvent} & \texttt{enum} & Defines clock event types (e.g., \texttt{SET}, \texttt{TICK}, \texttt{ALARM}) \\
 \hline
-\texttt{clock.c}, \texttt{dcf77.c} & \texttt{dcf77TimeZone} & \texttt{enum} & Indicates selected time zone: \texttt{MET} or \texttt{EST} \\
+\texttt{clock.c}, \texttt{dcf77.c} & \texttt{dcf77TimeZone} & \texttt{enum} & Indicates selected time zone: \texttt{US} or \texttt{DE} \\
 \hline
 \texttt{clock.c}, \texttt{dcf77.c}, \texttt{main.c} & \texttt{dcf77Event} & \texttt{enum} & Represents different signal states or transitions from the DCF77 decoder \\
 \hline
@@ -232,29 +232,25 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
 \subsection{clock.c}
 \begin{itemize}
     \item \textbf{initClock()}  
-    Loads the initial time and weekday.
+    Initializes the clock module and displays the initial time on the LCD.
 
     \item \textbf{tick10ms()}  
-    Called every 10\,ms to advance internal clock logic.
+    Called every 10\,ms by the system timer. Updates internal time base, detects full seconds, handles LED toggling, and samples the DCF77 signal.
 
     \item \textbf{processEventsClock(clockEvent)}  
-    Updates internal time based on received event.
+    Called once per second (on SECONDTICK). Advances the internal clock time (hours, minutes, seconds).
 
     \item \textbf{setClock(hours, minutes, seconds)}  
-    Sets the current time, e.g. based on DCF77 data.
-
-    \item \textbf{tzName()}  
-    Returns the time zone abbreviation.
-
-    \item \textbf{tzHours()}  
-    Returns the time zone offset.
+    Sets the internal clock time. Resets the tick counter if seconds are set to 0.
 
     \item \textbf{displayTimeClock()}  
-    Writes current time to the LCD using \texttt{writeLine()}.
+    Displays the current time on the LCD. Prefixes with "US" or "DE" depending on the selected time zone.
 
     \item \textbf{time()}  
-    Returns the system uptime in milliseconds.
+    Returns the CPU uptime in milliseconds since system start.
 \end{itemize}
+
+
 
 % ---------------------------------------
 % 6.3 dcf77.c
@@ -262,36 +258,44 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
 
 \subsection{dcf77.c}
 \begin{itemize}
-    \item \textbf{initDCF77()}  
-    Initializes the DCF77 module and decoder state.
-
     \item \textbf{initializePort()}  
-    Configures Port H.0 for input signal polling.
+    Configures Port H.0 as input to receive the DCF77 signal. Interrupts are disabled.
 
     \item \textbf{readPort()}  
-    Reads the DCF77 signal from Port H.0 (0 = LOW, 1 = HIGH).
+    Reads the signal level from Port H.0. Returns 0 if LOW, 1 if HIGH.
 
-    \item \textbf{sampleSignalDCF77(currentTime)}  
-    Called every 10\,ms. Measures pulse durations and returns DCF77 events.
-
-    \item \textbf{processEventsDCF77(event)}  
-    Processes signal states via a DCF77 event state machine.
-
-    \item \textbf{updateDate()}  
-    Updates system date and time, and refreshes the display.
+    \item \textbf{initDCF77()}  
+    Initializes the DCF77 module. Sets the initial clock and displays the decoded date on the LCD.
 
     \item \textbf{displayDateDcf77()}  
-    Displays the decoded date on the LCD using \texttt{writeLine()}.
+    Formats and displays the decoded date on the second line of the LCD.
 
-    \item \textbf{setDateDcf77()}  
-    Validates the received data and updates internal variables.
+    \item \textbf{sampleSignalDCF77(currentTime)}  
+    Called every 10\,ms to sample the DCF77 signal. Detects falling and rising edges and determines whether the signal represents a valid second, bit, or minute.
 
-    \item \textbf{verifyValue(start, end)}  
-    Verifies a BCD-coded value including parity check.
+    \item \textbf{processEventsDCF77(event)}  
+    Processes DCF77 events. Stores received bits, handles complete minute frames, and triggers clock update and date display if valid data is received.
 
-    \item \textbf{setTimeZone(timeZone, hours, minutes)}  
-    Sets the system time zone and applies the offset.
+    \item \textbf{eventMinute()}  
+    Parses a full DCF77 minute frame. Extracts and validates date and time values, including parity checks. Updates internal variables if successful.
+
+    \item \textbf{USDE()}  
+    Applies a \texttt{+6h} or \texttt{-6h} offset to switch between DE and US time zones. Adjusts weekday and date accordingly.
+
+    \item \textbf{USDE\_Pressed()}  
+    Checks if the button on Port H.3 is pressed. Toggles the selected time zone and updates display and internal time accordingly.
+
+    \item \textbf{isLeap(year)}  
+    Determines whether the given year is a leap year. Returns 1 if true, 0 otherwise.
+
+    \item \textbf{daysInMonth(month, year)}  
+    Returns the number of days in the specified month. Accounts for leap years in February.
+
+    \item \textbf{adjustDate(day, month, year, deltaDays)}  
+    Adds or subtracts days to a given date, correctly wrapping over month and year boundaries. Used when switching time zones across midnight.
 \end{itemize}
+
+
 
 % ---------------------------------------
 % 6.4 lcd.asm
@@ -299,9 +303,18 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
 
 \subsection{lcd.asm}
 \begin{itemize}
-    \item \textbf{writeLine(line, text)}  
-    Displays a text string on the specified LCD line.
+    \item \textbf{initLCD()}  
+    Initializes the LCD display. Configures ports, sends initialization command sequences, and clears the display. Must be called once before using the display.
+
+    \item \textbf{writeLine(X, B)}  
+    Writes a zero-terminated string to the specified LCD row.  
+    \texttt{X} is a pointer to the string, and \texttt{B} is the row number (0 or 1).  
+    If the string is shorter than 16 characters, the remaining space is filled with blanks. Longer strings are truncated.
+
+    \item \textbf{delay\_10ms()}  
+    Delays execution for approximately 10 milliseconds. Used for timing synchronization during LCD operations.
 \end{itemize}
+
 
 % ---------------------------------------
 % 6.5 led.asm
@@ -310,30 +323,18 @@ Only the necessary extensions to the \texttt{dcf77.c} and \texttt{clock.c} files
 \subsection{led.asm}
 \begin{itemize}
     \item \textbf{initLED()}  
-    Initializes the LED output pins on Port B.
+    Initializes the LED output pins. Configures Port B as output and turns off all LEDs. Also activates LED control by enabling Port J.1 and (optionally) disables the seven-segment display.
 
-    \item \textbf{setLED0(on)}  
-    Toggles LED on Port B.0 every second.
+    \item \textbf{toggleLED(bitmask)}  
+    Toggles the state of LEDs specified by the bitmask. A bit set to 1 in the mask inverts the current LED state.
 
-    \item \textbf{setLED1(signal)}  
-    Reflects raw DCF77 signal on Port B.1.
+    \item \textbf{setLED(bitmask)}  
+    Turns on the LEDs specified by the bitmask. Only bits set to 1 in the bitmask are affected.
 
-    \item \textbf{setLED2(error)}  
-    Lights up Port B.2 if invalid data is detected.
-
-    \item \textbf{setLED3(valid)}  
-    Turns on Port B.3 when a valid DCF77 frame is decoded.
+    \item \textbf{clrLED(bitmask)}  
+    Turns off the LEDs specified by the bitmask. Only bits set to 1 in the bitmask are affected.
 \end{itemize}
 
-% ---------------------------------------
-% 6.6 button.asm
-% ---------------------------------------
-
-\subsection{button.asm}
-\begin{itemize}
-    \item \textbf{USDE\_Pressed()}  
-    Detects button press on PTH3 to toggle between DE and US time zones.
-\end{itemize}
 
 \newpage
 
